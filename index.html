@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jane Diamond Brands — Your Unified Ordering Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #008060;
+  --dark-green: #004c3f;
+  --light-green: #b5e4ca;
+  --green-bg: #e3f1eb;
+  --black: #1a1a1a;
+  --white: #ffffff;
+  --gray-100: #f7f7f8;
+  --gray-200: #e8e8e8;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; overflow: hidden; background: var(--black); }
+
+.slide {
+  position: absolute; top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  padding: 60px 80px;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+  pointer-events: none;
+  visibility: hidden;
+  z-index: 0;
+}
+.slide.active {
+  opacity: 1;
+  pointer-events: auto; visibility: visible; z-index: 2;
+}
+.slide.prev {
+  opacity: 0;
+  visibility: hidden; z-index: 1;
+}
+
+.bg-white { background: var(--white); color: var(--black); }
+.bg-dark { background: var(--black); color: #ffffff; }
+.bg-dark h1, .bg-dark h2, .bg-dark h3, .bg-dark p, .bg-dark div { color: #ffffff; }
+.bg-dark .stat-box .stat-num { color: var(--light-green); }
+.bg-dark .accent { color: var(--light-green); }
+.bg-green { background: var(--green); color: var(--white); }
+.bg-gradient { background: linear-gradient(135deg, var(--dark-green), var(--green), #00a67e); color: #ffffff; }
+.bg-gradient h1, .bg-gradient h2, .bg-gradient h3, .bg-gradient p, .bg-gradient div { color: #ffffff; }
+.bg-gradient .accent { color: var(--light-green); }
+.bg-soft { background: var(--gray-100); color: var(--black); }
+
+.logo {
+  position: absolute; top: 32px; left: 40px;
+  width: 110px; height: auto;
+}
+.bg-white .logo,
+.bg-soft .logo { color: var(--black); }
+.bg-dark .logo,
+.bg-green .logo,
+.bg-gradient .logo { color: var(--white); }
+
+.slide-content {
+  max-width: 1100px; width: 100%; z-index: 1;
+  margin: 0 auto; text-align: center;
+}
+.slide-content.left { text-align: left; }
+
+h1 { font-size: 72px; font-weight: 900; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 24px; }
+h2 { font-size: 54px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.15; margin-bottom: 20px; }
+h3 { font-size: 36px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 16px; }
+p { font-size: 24px; font-weight: 400; line-height: 1.6; }
+.subtitle { font-size: 30px; font-weight: 400; opacity: 1; line-height: 1.5; }
+.big-number { font-size: 140px; font-weight: 900; letter-spacing: -3px; line-height: 1; }
+.accent { color: var(--light-green); }
+.bg-white .accent,
+.bg-soft .accent { color: var(--green); }
+
+.card {
+  background: var(--white); border-radius: 16px; padding: 28px 32px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+}
+
+.grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+.roadmap-card {
+  border-radius: 16px; padding: 28px 32px;
+  background: var(--white); border: 2px solid var(--gray-200);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  text-align: left;
+  transition: all 0.3s ease;
+}
+.roadmap-card.highlighted {
+  border-color: var(--green); background: var(--green-bg);
+  box-shadow: 0 4px 20px rgba(0,128,96,0.15);
+}
+.roadmap-card .topic-num {
+  display: inline-block; width: 36px; height: 36px; border-radius: 50%;
+  background: var(--gray-200); color: var(--black);
+  font-weight: 800; font-size: 16px; text-align: center; line-height: 36px;
+  margin-bottom: 14px;
+}
+.roadmap-card.highlighted .topic-num { background: var(--green); color: var(--white); }
+.roadmap-card .topic-name { font-size: 21px; font-weight: 700; letter-spacing: -0.3px; color: var(--black); }
+.roadmap-card .topic-impact {
+  margin-top: 12px; font-size: 16px; font-weight: 700; color: var(--green);
+  padding: 6px 14px; background: var(--green-bg); border-radius: 8px; display: inline-block;
+}
+.roadmap-card .topic-impact.hidden { display: none; }
+
+.flow-container { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
+.flow-box {
+  background: var(--white); border-radius: 16px; padding: 20px 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center; min-width: 180px;
+}
+.flow-box.connector {
+  background: var(--green); color: var(--white); border-radius: 16px;
+  padding: 20px 32px; min-width: 220px;
+}
+.flow-box.portal {
+  background: var(--green-bg); border: 2px solid var(--green);
+  border-radius: 16px; padding: 24px 36px; min-width: 320px;
+}
+.flow-arrow { font-size: 22px; color: #999; font-weight: 500; }
+.flow-label { font-size: 14px; color: #666; margin: 2px 0; }
+
+.big-quote { font-size: 44px; font-weight: 800; line-height: 1.3; letter-spacing: -1px; color: #ffffff; }
+
+.circle-deco {
+  position: absolute; border-radius: 50%; opacity: 0.06;
+  animation: float 8s ease-in-out infinite;
+}
+.bg-dark .circle-deco { background: var(--white); }
+.bg-white .circle-deco,
+.bg-soft .circle-deco { background: var(--green); }
+.bg-green .circle-deco,
+.bg-gradient .circle-deco { background: var(--white); }
+.circle-1 { width: 300px; height: 300px; top: -80px; right: -60px; animation-delay: 0s; }
+.circle-2 { width: 200px; height: 200px; bottom: -40px; left: -40px; animation-delay: 2s; }
+.circle-3 { width: 150px; height: 150px; top: 40%; right: 10%; animation-delay: 4s; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.progress-bar {
+  position: fixed; bottom: 0; left: 0; height: 4px;
+  background: var(--green); z-index: 100; transition: width 0.5s ease;
+}
+.slide-counter {
+  position: fixed; bottom: 16px; right: 24px; font-size: 14px;
+  font-weight: 600; color: #999; z-index: 100; font-family: 'Inter', sans-serif;
+}
+.slide-dots {
+  position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 8px; z-index: 100;
+}
+.slide-dots .dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: rgba(255,255,255,0.3); border: none;
+  cursor: pointer; transition: all 0.3s ease; padding: 0;
+}
+.slide-dots .dot.active {
+  background: var(--green); width: 28px; border-radius: 5px;
+}
+.slide-dots .dot:hover { background: rgba(255,255,255,0.6); }
+.slide-dots .dot.active:hover { background: var(--green); }
+
+.black-slide p {
+  font-size: 36px; font-weight: 600; text-align: center; color: rgba(255,255,255,0.8);
+}
+.black-slide p span { font-size: 24px; color: rgba(255,255,255,0.6); }
+
+.stat-box { text-align: center; }
+.stat-box .stat-num { font-size: 60px; font-weight: 900; color: var(--light-green); }
+.stat-box .stat-label { font-size: 18px; opacity: 0.7; margin-top: 4px; color: #ffffff; }
+
+@media (max-width: 900px) {
+  .slide { padding: 40px 24px; }
+  h1 { font-size: 40px; }
+  h2 { font-size: 32px; }
+  h3 { font-size: 24px; }
+  p { font-size: 18px; }
+  .grid-4 { grid-template-columns: 1fr; }
+  .flow-container { flex-direction: column; }
+  .big-number { font-size: 80px; }
+  .big-quote { font-size: 26px; }
+  .stat-box .stat-num { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+
+<svg id="logo-template" style="display:none" viewBox="0 0 446.3 127.5" xmlns="http://www.w3.org/2000/svg">
+<g fill="currentColor"><g>
+<path d="M154.4,70.9c-3.8-2.1-5.8-3.8-5.8-6.2c0-3.1,2.7-5,7-5c5,0,9.4,2.1,9.4,2.1l3.5-10.7c0,0-3.2-2.5-12.7-2.5c-13.2,0-22.4,7.6-22.4,18.2c0,6,4.3,10.6,10,13.9c4.6,2.6,6.2,4.5,6.2,7.2c0,2.9-2.3,5.2-6.6,5.2c-6.4,0-12.4-3.3-12.4-3.3l-3.7,10.7c0,0,5.6,3.7,14.9,3.7c13.6,0,23.3-6.7,23.3-18.7C165.3,78.9,160.3,74.3,154.4,70.9z"/>
+<path d="M208.6,48.4c-6.7,0-11.9,3.2-16,8l-0.2-0.1l5.8-30.4H183l-14.7,77.3h15.1l5-26.4c2-10,7.1-16.1,11.9-16.1c3.4,0,4.7,2.3,4.7,5.6c0,2.1-0.2,4.6-0.7,6.7l-5.7,30.3h15.1l5.9-31.2c0.7-3.3,1.1-7.2,1.1-9.9C220.9,53.5,216.5,48.4,208.6,48.4z"/>
+<path d="M255.1,48.4c-18.2,0-30.3,16.4-30.3,34.7c0,11.7,7.2,21.2,20.8,21.2c17.9,0,29.9-16,29.9-34.7C275.6,58.7,269.3,48.4,255.1,48.4z M247.7,92.6c-5.2,0-7.3-4.4-7.3-9.9c0-8.7,4.5-22.8,12.7-22.8c5.4,0,7.1,4.6,7.1,9.1C260.2,78.4,255.7,92.6,247.7,92.6z"/>
+<path d="M314.3,48.4c-10.2,0-16,9-16,9h-0.2l0.9-8.1h-13.4c-0.7,5.5-1.9,13.8-3.1,20.1L272,124.6h15.1l4.2-22.4h0.3c0,0,3.1,2,8.9,2c17.8,0,29.4-18.2,29.4-36.6C329.9,57.5,325.4,48.4,314.3,48.4z M299.9,92.9c-3.9,0-6.2-2.2-6.2-2.2l2.5-14.1c1.8-9.4,6.7-15.7,11.9-15.7c4.6,0,6,4.3,6,8.3C314.1,78.9,308.3,92.9,299.9,92.9z"/>
+<path d="M351.5,26.7c-4.8,0-8.7,3.8-8.7,8.8c0,4.5,2.8,7.6,7.1,7.6h0.2c4.7,0,8.8-3.2,8.9-8.8C359.1,29.8,356.1,26.7,351.5,26.7z"/>
+<polygon points="330.3,103.2 345.5,103.2 355.8,49.6 340.5,49.6"/>
+<path d="M394.2,49.5h-10.5l0.5-2.5c0.9-5.2,3.9-9.8,9-9.8c2.7,0,4.8,0.8,4.8,0.8l3-11.8c0,0-2.6-1.3-8.2-1.3c-5.4,0-10.7,1.5-14.8,5c-5.2,4.4-7.6,10.7-8.8,17.1l-0.4,2.5h-7l-2.2,11.4h7l-8,42.3h15.1l8-42.3h10.4L394.2,49.5z"/>
+<path d="M430.6,49.6c0,0-9.5,23.8-13.7,36.8h-0.2c-0.3-4.2-3.7-36.8-3.7-36.8h-15.9l9.1,49.2c0.2,1.1,0.1,1.8-0.3,2.5c-1.8,3.4-4.7,6.7-8.2,9.1c-2.8,2.1-6,3.4-8.5,4.3l4.2,12.8c3.1-0.7,9.4-3.2,14.8-8.2c6.9-6.5,13.3-16.4,19.8-30l18.5-39.7H430.6z"/>
+</g><g>
+<path d="M74.8,14.8c0,0-1.4,0.4-3.7,1.1c-0.4-1.3-1-2.8-1.8-4.4c-2.6-5-6.5-7.7-11.1-7.7c-0.3,0-0.6,0-1,0.1c-0.1-0.2-0.3-0.3-0.4-0.5c-2-2.2-4.6-3.2-7.7-3.1c-6,0.2-12,4.5-16.8,12.2c-3.4,5.4-6,12.2-6.7,17.5c-6.9,2.1-11.7,3.6-11.8,3.7c-3.5,1.1-3.6,1.2-4,4.5c-0.3,2.5-9.5,72.9-9.5,72.9l75.6,13.1V14.7C75.3,14.7,75,14.8,74.8,14.8z M57.3,20.2c-4,1.2-8.4,2.6-12.7,3.9c1.2-4.7,3.6-9.4,6.4-12.5c1.1-1.1,2.6-2.4,4.3-3.2C57,12,57.4,16.9,57.3,20.2z M49.1,4.4c1.4,0,2.6,0.3,3.6,0.9c-1.6,0.8-3.2,2.1-4.7,3.6c-3.8,4.1-6.7,10.5-7.9,16.6c-3.6,1.1-7.2,2.2-10.5,3.2C31.8,19.1,39.9,4.6,49.1,4.4z M37.5,59.4c0.4,6.4,17.3,7.8,18.3,22.9c0.7,11.9-6.3,20-16.4,20.6c-12.2,0.8-18.9-6.4-18.9-6.4l2.6-11c0,0,6.7,5.1,12.1,4.7c3.5-0.2,4.8-3.1,4.7-5.1c-0.5-8.4-14.3-7.9-15.2-21.7C23.9,51.8,31.5,40.1,48.3,39c6.5-0.4,9.8,1.2,9.8,1.2l-3.8,14.4c0,0-4.3-2-9.4-1.6C37.5,53.5,37.4,58.2,37.5,59.4z M61.3,19c0-3-0.4-7.3-1.8-10.9c4.6,0.9,6.8,6,7.8,9.1C65.5,17.7,63.5,18.3,61.3,19z"/>
+<path d="M78.2,124l31.4-7.8c0,0-13.5-91.3-13.6-91.9c-0.1-0.6-0.6-1-1.1-1c-0.5,0-9.3-0.2-9.3-0.2s-5.4-5.2-7.4-7.2V124z"/>
+</g></g>
+</svg>
+
+<!-- Slide 1: Limbic Opening — 1 Portal messaging -->
+<div class="slide bg-gradient">
+  <div class="circle-deco circle-1"></div>
+  <div class="circle-deco circle-2"></div>
+  <div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <p class="subtitle" style="margin-bottom:16px; color:#ffffff;">8 suppliers. 1,200 retailers. One vision.</p>
+    <h1><span class="accent">One</span> portal<br>for everything.</h1>
+    <p style="font-size:26px; margin-top:24px; font-weight:400; max-width:750px; margin-left:auto; margin-right:auto; color:#ffffff;">What if your retailers could browse every brand you represent, place one order, and never visit another supplier website again?</p>
+  </div>
+</div>
+
+<!-- Slide 2: Initial Visual Roadmap -->
+<div class="slide bg-white">
+  <div class="circle-deco circle-1"></div>
+  <div class="circle-deco circle-2"></div>
+  <div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h3 style="color:var(--green); margin-bottom:4px;">Jane Diamond Brands</h3>
+    <h2>Your Unified Ordering Portal</h2>
+    <div class="grid-4" style="margin-top:32px;">
+      <div class="roadmap-card"><div class="topic-num">1</div><div class="topic-name">The Customer Experience</div><div class="topic-impact hidden">One Login, Every Brand</div></div>
+      <div class="roadmap-card"><div class="topic-num">2</div><div class="topic-name">Ordering Made Simple</div><div class="topic-impact hidden">Eliminate Manual Orders</div></div>
+      <div class="roadmap-card"><div class="topic-num">3</div><div class="topic-name">Managing Your Business</div><div class="topic-impact hidden">Run It Yourself</div></div>
+      <div class="roadmap-card"><div class="topic-num">4</div><div class="topic-name">Connecting Your Suppliers</div><div class="topic-impact hidden">Automatic Order Routing</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 3: Roadmap — Card 1 Highlighted -->
+<div class="slide bg-white">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h3 style="color:var(--green); margin-bottom:4px;">Your Unified Ordering Portal</h3>
+    <div class="grid-4" style="margin-top:20px;">
+      <div class="roadmap-card highlighted"><div class="topic-num">1</div><div class="topic-name">The Customer Experience</div></div>
+      <div class="roadmap-card"><div class="topic-num">2</div><div class="topic-name">Ordering Made Simple</div></div>
+      <div class="roadmap-card"><div class="topic-num">3</div><div class="topic-name">Managing Your Business</div></div>
+      <div class="roadmap-card"><div class="topic-num">4</div><div class="topic-name">Connecting Your Suppliers</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 4: Black Transition — Live Demo 1 -->
+<div class="slide bg-dark black-slide">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <h3 style="color:var(--light-green); margin-bottom:12px; font-size:40px;">The Customer Experience</h3>
+  <p>— LIVE DEMO —</p>
+  <div style="display:flex; gap:16px; justify-content:center; margin-top:24px; flex-wrap:wrap;">
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:16px 24px; min-width:180px;"><span style="font-size:20px; color:var(--light-green); font-weight:600;">Retailer Login</span></div>
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:16px 24px; min-width:180px;"><span style="font-size:20px; color:var(--light-green); font-weight:600;">Browse by Brand</span></div>
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:16px 24px; min-width:180px;"><span style="font-size:20px; color:var(--light-green); font-weight:600;">Product Detail</span></div>
+  </div>
+</div>
+
+<!-- Slide 5: Roadmap — Impact 1 Revealed -->
+<div class="slide bg-white">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h3 style="color:var(--green); margin-bottom:4px;">Your Unified Ordering Portal</h3>
+    <div class="grid-4" style="margin-top:20px;">
+      <div class="roadmap-card highlighted"><div class="topic-num">1</div><div class="topic-name">The Customer Experience</div><div class="topic-impact">One Login, Every Brand</div></div>
+      <div class="roadmap-card"><div class="topic-num">2</div><div class="topic-name">Ordering Made Simple</div></div>
+      <div class="roadmap-card"><div class="topic-num">3</div><div class="topic-name">Managing Your Business</div></div>
+      <div class="roadmap-card"><div class="topic-num">4</div><div class="topic-name">Connecting Your Suppliers</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 6: Roadmap — Card 2 Highlighted -->
+<div class="slide bg-white">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h3 style="color:var(--green); margin-bottom:4px;">Your Unified Ordering Portal</h3>
+    <div class="grid-4" style="margin-top:20px;">
+      <div class="roadmap-card"><div class="topic-num">1</div><div class="topic-name">The Customer Experience</div><div class="topic-impact">One Login, Every Brand</div></div>
+      <div class="roadmap-card highlighted"><div class="topic-num">2</div><div class="topic-name">Ordering Made Simple</div></div>
+      <div class="roadmap-card"><div class="topic-num">3</div><div class="topic-name">Managing Your Business</div></div>
+      <div class="roadmap-card"><div class="topic-num">4</div><div class="topic-name">Connecting Your Suppliers</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 7: Black Transition — Live Demo 2 -->
+<div class="slide bg-dark black-slide">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <h3 style="color:var(--light-green); margin-bottom:12px; font-size:40px;">Ordering Made Simple</h3>
+  <p>— LIVE DEMO —</p>
+  <div style="display:flex; gap:16px; justify-content:center; margin-top:24px; flex-wrap:wrap;">
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:16px 24px; min-width:180px;"><span style="font-size:20px; color:var(--light-green); font-weight:600;">Multi-Brand Cart</span></div>
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:16px 24px; min-width:180px;"><span style="font-size:20px; color:var(--light-green); font-weight:600;">Pack Sizes & MOQ</span></div>
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:16px 24px; min-width:180px;"><span style="font-size:20px; color:var(--light-green); font-weight:600;">Quick Order</span></div>
+  </div>
+</div>
+
+<!-- Slide 8: Roadmap — Impact 2 Revealed -->
+<div class="slide bg-white">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h3 style="color:var(--green); margin-bottom:4px;">Your Unified Ordering Portal</h3>
+    <div class="grid-4" style="margin-top:20px;">
+      <div class="roadmap-card"><div class="topic-num">1</div><div class="topic-name">The Customer Experience</div><div class="topic-impact">One Login, Every Brand</div></div>
+      <div class="roadmap-card highlighted"><div class="topic-num">2</div><div class="topic-name">Ordering Made Simple</div><div class="topic-impact">Eliminate Manual Orders</div></div>
+      <div class="roadmap-card"><div class="topic-num">3</div><div class="topic-name">Managing Your Business</div></div>
+      <div class="roadmap-card"><div class="topic-num">4</div><div class="topic-name">Connecting Your Suppliers</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 9: Roadmap — Card 3 Highlighted -->
+<div class="slide bg-white">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h3 style="color:var(--green); margin-bottom:4px;">Your Unified Ordering Portal</h3>
+    <div class="grid-4" style="margin-top:20px;">
+      <div class="roadmap-card"><div class="topic-num">1</div><div class="topic-name">The Customer Experience</div><div class="topic-impact">One Login, Every Brand</div></div>
+      <div class="roadmap-card"><div class="topic-num">2</div><div class="topic-name">Ordering Made Simple</div><div class="topic-impact">Eliminate Manual Orders</div></div>
+      <div class="roadmap-card highlighted"><div class="topic-num">3</div><div class="topic-name">Managing Your Business</div></div>
+      <div class="roadmap-card"><div class="topic-num">4</div><div class="topic-name">Connecting Your Suppliers</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 10: Black Transition — Live Demo 3 -->
+<div class="slide bg-dark black-slide">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <h3 style="color:var(--light-green); margin-bottom:12px; font-size:40px;">Managing Your Business</h3>
+  <p>— LIVE DEMO —</p>
+  <div style="display:flex; gap:16px; justify-content:center; margin-top:24px; flex-wrap:wrap;">
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:16px 24px; min-width:180px;"><span style="font-size:20px; color:var(--light-green); font-weight:600;">Company Accounts</span></div>
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:16px 24px; min-width:180px;"><span style="font-size:20px; color:var(--light-green); font-weight:600;">Payment Terms</span></div>
+    <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:16px 24px; min-width:180px;"><span style="font-size:20px; color:var(--light-green); font-weight:600;">Order Management</span></div>
+  </div>
+</div>
+
+<!-- Slide 11: Roadmap — Impact 3 Revealed -->
+<div class="slide bg-white">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h3 style="color:var(--green); margin-bottom:4px;">Your Unified Ordering Portal</h3>
+    <div class="grid-4" style="margin-top:20px;">
+      <div class="roadmap-card"><div class="topic-num">1</div><div class="topic-name">The Customer Experience</div><div class="topic-impact">One Login, Every Brand</div></div>
+      <div class="roadmap-card"><div class="topic-num">2</div><div class="topic-name">Ordering Made Simple</div><div class="topic-impact">Eliminate Manual Orders</div></div>
+      <div class="roadmap-card highlighted"><div class="topic-num">3</div><div class="topic-name">Managing Your Business</div><div class="topic-impact">Run It Yourself</div></div>
+      <div class="roadmap-card"><div class="topic-num">4</div><div class="topic-name">Connecting Your Suppliers</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 12: Roadmap — Card 4 Highlighted -->
+<div class="slide bg-white">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h3 style="color:var(--green); margin-bottom:4px;">Your Unified Ordering Portal</h3>
+    <div class="grid-4" style="margin-top:20px;">
+      <div class="roadmap-card"><div class="topic-num">1</div><div class="topic-name">The Customer Experience</div><div class="topic-impact">One Login, Every Brand</div></div>
+      <div class="roadmap-card"><div class="topic-num">2</div><div class="topic-name">Ordering Made Simple</div><div class="topic-impact">Eliminate Manual Orders</div></div>
+      <div class="roadmap-card"><div class="topic-num">3</div><div class="topic-name">Managing Your Business</div><div class="topic-impact">Run It Yourself</div></div>
+      <div class="roadmap-card highlighted"><div class="topic-num">4</div><div class="topic-name">Connecting Your Suppliers</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 13: Data Flow Diagram — Jewelry suppliers, prices in, orders out -->
+<div class="slide bg-soft">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h2 style="color:var(--green); margin-bottom:8px; font-size:40px;">How It All Connects</h2>
+    <p style="color:#555; font-size:22px; margin-bottom:28px;">Products, prices &amp; stock flow in. Orders flow back out. Automatically.</p>
+    <div style="display:flex; flex-direction:column; gap:12px; align-items:center;">
+      <div class="flow-container">
+        <div class="flow-box"><div style="font-size:32px; margin-bottom:4px;">💎</div><strong style="font-size:18px;">Supplier 1</strong><br><span style="font-size:16px; color:#555;">Fine Jewelry</span></div>
+        <div class="flow-box"><div style="font-size:32px; margin-bottom:4px;">📿</div><strong style="font-size:18px;">Supplier 2</strong><br><span style="font-size:16px; color:#555;">Fashion Jewelry</span></div>
+        <div class="flow-box"><div style="font-size:32px; margin-bottom:4px;">💍</div><strong style="font-size:18px;">Supplier 3</strong><br><span style="font-size:16px; color:#555;">Accessories</span></div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:32px; color:var(--green);">↓ ↓ ↓</div>
+        <div style="font-size:16px; font-weight:600; color:var(--green);">Products, prices &amp; stock levels</div>
+      </div>
+      <div class="flow-box connector" style="width:400px;"><strong style="font-size:20px;">The Connector</strong><br><span style="font-size:16px; opacity:0.9;">Translates &amp; routes data automatically</span></div>
+      <div style="text-align:center;">
+        <div style="font-size:32px; color:var(--green);">↓</div>
+        <div style="font-size:16px; font-weight:600; color:var(--green);">All products appear in one catalog</div>
+      </div>
+      <div class="flow-box portal" style="width:480px;"><strong style="font-size:22px; color:var(--dark-green);">Jane Diamond Brands Portal</strong><br><span style="font-size:18px; color:var(--green);">Retailer logs in → Browses all brands → Places one order</span></div>
+      <div style="text-align:center;">
+        <div style="font-size:16px; font-weight:600; color:var(--green);">Orders automatically split &amp; route back</div>
+      </div>
+      <div class="flow-container">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <div style="font-size:28px; color:var(--green);">↓</div>
+          <div class="flow-box" style="border:2px solid var(--light-green);"><strong style="font-size:17px;">Supplier 1</strong><br><span style="font-size:15px; color:var(--green);">Receives their<br>order portion</span></div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <div style="font-size:28px; color:var(--green);">↓</div>
+          <div class="flow-box" style="border:2px solid var(--light-green);"><strong style="font-size:17px;">Supplier 2</strong><br><span style="font-size:15px; color:var(--green);">Receives their<br>order portion</span></div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+          <div style="font-size:28px; color:var(--green);">↓</div>
+          <div class="flow-box" style="border:2px solid var(--light-green);"><strong style="font-size:17px;">Supplier 3</strong><br><span style="font-size:15px; color:var(--green);">Receives their<br>order portion</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 14: Roadmap — All 4 Impacts Visible -->
+<div class="slide bg-white">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h3 style="color:var(--green); margin-bottom:4px;">Your Unified Ordering Portal</h3>
+    <div class="grid-4" style="margin-top:20px;">
+      <div class="roadmap-card"><div class="topic-num">1</div><div class="topic-name">The Customer Experience</div><div class="topic-impact">One Login, Every Brand</div></div>
+      <div class="roadmap-card"><div class="topic-num">2</div><div class="topic-name">Ordering Made Simple</div><div class="topic-impact">Eliminate Manual Orders</div></div>
+      <div class="roadmap-card"><div class="topic-num">3</div><div class="topic-name">Managing Your Business</div><div class="topic-impact">Run It Yourself</div></div>
+      <div class="roadmap-card highlighted"><div class="topic-num">4</div><div class="topic-name">Connecting Your Suppliers</div><div class="topic-impact">Automatic Order Routing</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 15: Final Visual Roadmap — All Impacts -->
+<div class="slide bg-green">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h2 style="margin-bottom:40px;">Your Unified Ordering Portal</h2>
+    <div class="grid-4">
+      <div class="card" style="text-align:left;">
+        <div style="font-size:36px; font-weight:900; color:var(--green); margin-bottom:8px;">1</div>
+        <h3 style="color:var(--black); font-size:18px; margin-bottom:6px;">The Customer Experience</h3>
+        <p style="font-size:17px; font-weight:700; color:var(--green); margin:0;">One Login, Every Brand</p>
+      </div>
+      <div class="card" style="text-align:left;">
+        <div style="font-size:36px; font-weight:900; color:var(--green); margin-bottom:8px;">2</div>
+        <h3 style="color:var(--black); font-size:18px; margin-bottom:6px;">Ordering Made Simple</h3>
+        <p style="font-size:17px; font-weight:700; color:var(--green); margin:0;">Eliminate Manual Orders</p>
+      </div>
+      <div class="card" style="text-align:left;">
+        <div style="font-size:36px; font-weight:900; color:var(--green); margin-bottom:8px;">3</div>
+        <h3 style="color:var(--black); font-size:18px; margin-bottom:6px;">Managing Your Business</h3>
+        <p style="font-size:17px; font-weight:700; color:var(--green); margin:0;">Run It Yourself</p>
+      </div>
+      <div class="card" style="text-align:left;">
+        <div style="font-size:36px; font-weight:900; color:var(--green); margin-bottom:8px;">4</div>
+        <h3 style="color:var(--black); font-size:18px; margin-bottom:6px;">Connecting Your Suppliers</h3>
+        <p style="font-size:17px; font-weight:700; color:var(--green); margin:0;">Automatic Order Routing</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Slide 16: Value Close -->
+<div class="slide bg-gradient">
+  <div class="circle-deco circle-1"></div><div class="circle-deco circle-2"></div><div class="circle-deco circle-3"></div>
+  <div class="slide-content">
+    <h1>One portal.<br><span class="accent">Every brand.</span></h1>
+    <p style="font-size:26px; margin-top:32px; font-weight:500; max-width:750px; margin-left:auto; margin-right:auto; line-height:1.6; color:#ffffff;">A professional, branded ordering portal with 1,200 retail accounts, automated ordering, and a clean technology foundation.<br><br><strong style="font-weight:800; color:#ffffff;">Not just a tool — a business asset.</strong></p>
+  </div>
+</div>
+
+
+<div class="progress-bar" id="progress"></div>
+<div class="slide-counter" id="counter"></div>
+<div class="slide-dots" id="dots"></div>
+
+<script>
+(function() {
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var current = 0;
+
+  var dotsContainer = document.getElementById('dots');
+  for (var d = 0; d < total; d++) {
+    var dot = document.createElement('button');
+    dot.className = 'dot';
+    dot.setAttribute('data-idx', d);
+    dot.addEventListener('click', function(e) {
+      e.stopPropagation();
+      current = parseInt(this.getAttribute('data-idx'));
+      show(current);
+    });
+    dotsContainer.appendChild(dot);
+  }
+  var dots = dotsContainer.querySelectorAll('.dot');
+
+  function show(idx) {
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].classList.remove('active', 'prev');
+      if (i === idx) slides[i].classList.add('active');
+      else if (i < idx) slides[i].classList.add('prev');
+    }
+    for (var j = 0; j < dots.length; j++) {
+      dots[j].classList.toggle('active', j === idx);
+    }
+    document.getElementById('progress').style.width = ((idx + 1) / total * 100) + '%';
+    document.getElementById('counter').textContent = (idx + 1) + ' / ' + total;
+  }
+
+  function next() { if (current < total - 1) { current++; show(current); } }
+  function prev() { if (current > 0) { current--; show(current); } }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('.slide-dots')) return;
+    if (e.clientX > window.innerWidth / 2) next(); else prev();
+  });
+
+  var touchX = 0;
+  document.addEventListener('touchstart', function(e) { touchX = e.touches[0].clientX; });
+  document.addEventListener('touchend', function(e) {
+    var diff = touchX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { diff > 0 ? next() : prev(); }
+  });
+
+  var logoTemplate = document.getElementById('logo-template');
+  for (var i = 0; i < slides.length; i++) {
+    var clone = logoTemplate.cloneNode(true);
+    clone.removeAttribute('id');
+    clone.classList.add('logo');
+    clone.style.display = '';
+    slides[i].appendChild(clone);
+  }
+
+  show(0);
+})();
+</script>
+</body>
+</html>
